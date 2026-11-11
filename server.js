@@ -30,7 +30,17 @@ app.set('view engine', 'ejs');
 // Tell Express where to find your templates
 app.set('views', path.join(directoryName, 'src/views'));
 
+app.use((req, res, next) => {
+    if (nodeEnv === 'development') {
+        console.log(`${req.method} ${req.url}`);
+    }
+    next();
+});
 
+app.use((req, res, next) => {
+    res.locals.NODE_ENV = nodeEnv;
+    next();
+});
 /**
  * Routes
  */
