@@ -2,9 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { testConnection } from './src/models/db.js';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllProjects } from './src/models/projects.js';
-import { getAllCategories } from './src/models/categories.js';
+import router from './src/routes.js';
 
 // Define the application environment
 const nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -31,43 +29,46 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(directoryName, 'src/views'));
 
 app.use((req, res, next) => {
-    if (nodeEnv === 'development') {
-        console.log(`${req.method} ${req.url}`);
-    }
-    next();
+  if (nodeEnv === 'development') {
+    console.log(`${req.method} ${req.url}`);
+  }
+  next();
 });
 
 app.use((req, res, next) => {
-    res.locals.NODE_ENV = nodeEnv;
-    next();
-});
-/**
- * Routes
- */
-app.get('/', async (req, res) => {
-    const title = 'Home';
-    res.render('home', { title });
+  res.locals.NODE_ENV = nodeEnv;
+  next();
 });
 
-app.get('/organizations', async (req, res) => {
-    const organizations = await getAllOrganizations();
-    const title = 'Our Partner Organizations';
+// Use the imported router to handle routes
+app.use(router);
 
-    res.render('organizations', { title, organizations });
+// Catch-all route for 404 errors
+app.use((req, res, next) => {
+  const err = new Error('Page Not Found');
+  err.status = 404;
+  next(err);
 });
 
-app.get('/projects', async (req, res) => {
-    const projects = await getAllProjects();
-    const title = 'Service Projects';
+// Global error handler
+app.use((err, req, res, next) => {
+  // Log error details for debugging
+  console.error('Error occurred:', err.message);
+  console.error('Stack trace:', err.stack);
 
-    res.render('projects', { title, projects });
-});
+  // Determine status and template
+  const status = err.status || 500;
+  const template = status === 404 ? '404' : '500';
 
-app.get('/categories', async (req, res) => {
-    const categories = await getAllCategories();
-    const title = 'Service Project Categories';
+  // Prepare data for the template
+  const context = {
+    title: status === 404 ? 'Page Not Found' : 'Server Error',
+    error: err.message,
+    stack: err.stack
+  };
 
-    res.render('categories', { title, categories });
+  // Render the appropriate error template
+  res.status(status).render(`errors/${template}`, context);
 });
 
 app.listen(port, async () => {
