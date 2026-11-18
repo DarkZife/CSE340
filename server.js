@@ -20,6 +20,10 @@ const app = express();
   */
 
 // Serve static files from the public directory
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(express.static(path.join(directoryName, 'public')));
 
 // Set EJS as the templating engine
