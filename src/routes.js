@@ -6,7 +6,9 @@ import {
     showOrganizationDetailsPage, 
     showNewOrganizationForm, 
     processNewOrganizationForm,
-    organizationValidation 
+    organizationValidation,
+    showEditOrganizationForm,
+    processEditOrganizationForm
 } from './controllers/organizations.js';
 
 import { 
@@ -28,6 +30,8 @@ router.get('/organizations', showOrganizationsPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 router.get('/new-organization', showNewOrganizationForm);
 router.post('/new-organization', organizationValidation, processNewOrganizationForm);
+router.get('/edit-organization/:id', showEditOrganizationForm);
+router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
 router.get('/projects', showProjectsPage);
 router.get('/project/:projectId', showProjectDetailsPage);
 router.get('/categories', showCategoriesPage);
