@@ -13,7 +13,10 @@ import {
 
 import { 
     showProjectsPage, 
-    showProjectDetailsPage 
+    showProjectDetailsPage,
+    showNewProjectForm,
+    processNewProjectForm,
+    projectValidation
 } from './controllers/projects.js';
 
 import { 
@@ -34,6 +37,8 @@ router.get('/edit-organization/:id', showEditOrganizationForm);
 router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
 router.get('/projects', showProjectsPage);
 router.get('/project/:projectId', showProjectDetailsPage);
+router.get('/new-project', showNewProjectForm);
+router.post('/new-project', projectValidation, processNewProjectForm);
 router.get('/categories', showCategoriesPage);
 router.get('/category/:id', showCategoryDetailsPage);
 router.get('/test-error', testErrorPage);
